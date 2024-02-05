@@ -127,11 +127,23 @@ def check_balance(addr):
         print(f"Error {response.status_code}: {response.reason}")
         return None
 
+def record_wallet(file_path, new_line):
+    try:        
+        with open(file_path, 'r') as f:
+            lines = f.readlines()
+            
+        lines.append(new_line)
+        
+        with open(file_path, 'w') as f:
+            f.writelines(lines)
+        
+    except FileNotFoundError:
+        print(f"File '{file_path}' not found.")
 
-with open("non_zero_balances.txt", "w", encoding="utf-8") as file:
-    for i in range(n):
-        balance = check_balance(arr[i, 1])
-        print("Balance of address :", arr[i, 1], " = ", balance)
-        time.sleep(2)
-        if balance != 0:  # Check for non-zero balance
-            file.write(f"{arr[i, 0]},{arr[i, 1]},{balance}\n")
+
+for i in range(n):
+    balance = check_balance(arr[i, 1])
+    print("Balance of address :", arr[i, 1], " = ", balance)
+    time.sleep(2)
+    if balance != 0:  # Check for non-zero balance
+        record_wallet("non_zero_balances.txt", f"{arr[i, 0]},{arr[i, 1]},{balance}\n")
