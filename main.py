@@ -103,7 +103,7 @@ def public_key_to_address(public_key_hex):
     return address
 
 
-n = 1000
+n = 10000
 arr = np.empty((n, 2), dtype=object)
 
 for i in range(n):
@@ -118,32 +118,43 @@ print(arr)
 
 
 def check_balance(addr):
-    url = f"https://blockchain.info/q/addressbalance/{addr}"
+    adddrs_index = {}
+    adddrs = ''
+    for i in range(len(addr)):
+        adddrs = adddrs + addr[i, 1] + '|'
+        adddrs_index[addr[i, 1]] = addr[i, 0]
+    url = f"https://blockchain.info/balance/?active={adddrs}"
     response = requests.get(url)
     if response.status_code == 200:
-        balance = int(response.text)
-        return balance
+        for key, value in response.json().items():
+            if (int(value['final_balance']) > 0 or int(value['n_tx']) > 0):
+                record_wallet("non_zero_balances.txt", f"{adddrs_index[key]},{key},{value['final_balance']}\n")
+        return 0
     else:
         print(f"Error {response.status_code}: {response.reason}")
         return None
 
+
 def record_wallet(file_path, new_line):
-    try:        
+    try:
         with open(file_path, 'r') as f:
             lines = f.readlines()
-            
+
         lines.append(new_line)
-        
+
         with open(file_path, 'w') as f:
             f.writelines(lines)
-        
+
     except FileNotFoundError:
         print(f"File '{file_path}' not found.")
 
 
-for i in range(n):
-    balance = check_balance(arr[i, 1])
-    print("Balance of address :", arr[i, 1], " = ", balance)
-    time.sleep(2)
-    if balance != 0:  # Check for non-zero balance
-        record_wallet("non_zero_balances.txt", f"{arr[i, 0]},{arr[i, 1]},{balance}\n")
+def process_list(my_list):
+    for i in range(0, len(my_list), 50):
+        process_list_chunk = my_list[i:i + 50]
+        # process_list_chunk[0][1]='16AbnZjZZipwHMkYKBSfswGWKDmXHjEpSf'
+        check_balance(process_list_chunk)
+        time.sleep(30)
+
+
+process_list(arr)
