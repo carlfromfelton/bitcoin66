@@ -9,10 +9,8 @@ from math import log2
 
 
 def generate_private_key():
-    min_hex = "0000000000000000000000000000000000000000000000020000000000000000"  # Minimum hex value (red in RGB)
-    max_hex = "000000000000000000000000000000000000000000000003ffffffffffffffff"  # Maximum hex value (white in RGB)
-    if int(min_hex, 16) > int(max_hex, 16):
-        raise ValueError("min_hex must be less than or equal to max_hex")
+    min_hex = "0000000000000000000000000000000000000000000000020000000000000000"  
+    max_hex = "000000000000000000000000000000000000000000000003ffffffffffffffff" 
 
     # Convert hex strings to integers
     min_value = int(min_hex, 16)
@@ -103,20 +101,6 @@ def public_key_to_address(public_key_hex):
     return address
 
 
-n = 10000
-arr = np.empty((n, 2), dtype=object)
-
-for i in range(n):
-    private_key_hex = generate_private_key()
-    wif_private_key = private_key_to_WIF(private_key_hex)
-    public_key_hex = private_key_to_public_key(private_key_hex)
-    address = public_key_to_address(public_key_hex)
-    arr[i, 0] = wif_private_key
-    arr[i, 1] = address
-
-print(arr)
-
-
 def check_balance(addr):
     adddrs_index = {}
     adddrs = ''
@@ -157,4 +141,16 @@ def process_list(my_list):
         time.sleep(30)
 
 
+n = 10000
+arr = np.empty((n, 2), dtype=object)
+
+for i in range(n):
+    private_key_hex = generate_private_key()
+    wif_private_key = private_key_to_WIF(private_key_hex)
+    public_key_hex = private_key_to_public_key(private_key_hex)
+    address = public_key_to_address(public_key_hex)
+    arr[i, 0] = wif_private_key
+    arr[i, 1] = address
+
+print(arr)
 process_list(arr)
