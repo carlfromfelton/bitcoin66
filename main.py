@@ -112,7 +112,7 @@ def check_balance(addr):
     if response.status_code == 200:
         for key, value in response.json().items():
             if (int(value['final_balance']) > 0 or int(value['n_tx']) > 0):
-                record_wallet("non_zero_balances.txt", f"{adddrs_index[key]},{key},{value['final_balance']}\n")
+                record_wallet("non_zero_balances.txt", f"{adddrs_index[key]},{key},{value['final_balance']},{value['n_tx']}\n")
         return 0
     else:
         print(f"Error {response.status_code}: {response.reason}")
